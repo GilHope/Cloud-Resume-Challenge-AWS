@@ -1,4 +1,4 @@
-name : Upload resume website to S3
+name : Upload cloud resume website to S3
 
 on:
   push:
