@@ -28,6 +28,6 @@ jobs:
         aws-region: 'us-east-1' 
 
     - name: Cloudfront create-invalidation
-      run: aws cloudfront create-invalidation --distribution-id E25PTMM0VI4A49 --paths "*"       
+      run: aws cloudfront create-invalidation --distribution-id E25PTMM0VI4A49 --paths "/*"       
         
         
