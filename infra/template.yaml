@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  infra
+
+  Sample SAM Template for infra
+
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 128
+
+
+Resources:
+
+  LambdaFunctionCloudResume: 
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: hello_world/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Environment:
+        Variables:
+          TABLE_NAME: DynamoDBTableCloudResume
+      Role: !GetAtt LambdaExecutionRoleCloudResume.Arn
+      FunctionName: LambdaFunctionCloudResume
+
+  LambdaExecutionRoleCloudResume:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: LambdaGetItemDynamoDBAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            Resource: !Ref DynamoDBTableCloudResume.Arn
+      - PolicyName: AWSLambdaBasicExecutionRole-c78192ef-fa47-4e67-a92d-dc0a043f24b6
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            Resource: arn:aws:logs:us-east-1:427480290040:*
+          - Effect: Allow
+            Action:
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: !Ref 'LambdaFunctionCloudResume.Arn'
+
+  # Need to add CORS. Only allow curl from website.
+
+Outputs:
+  ApiUrl:
+    Description: URL of the API Gateway endpoint (Lambda Function Url)
+    Value: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunctionCloudResume}" 
+  LambdaFunctionCloudResume:
+    Description: Visitor counter function
+    Value: !GetAtt 'LambdaFunctionCloudResume.Arn'
