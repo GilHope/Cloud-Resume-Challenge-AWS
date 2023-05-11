@@ -1,0 +1,122 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  IaC
+
+  Sample SAM Template for IaC
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 128
+
+Resources:
+
+  CloudResumeBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: cloud-resume-challenge-2-1234123421
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      AccessControl: Private
+      #BucketKeyEnabled: true ????
+
+  CloudResumeFront:
+    Type: AWS::Cloudfront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !Ref ghope.cloud.DomainName
+            Id: S3Origin
+        Enabled: true
+        # DefaultRootObject: index.html
+        PriceClass: PriceClass_All
+        DefaultCacheBehavior:
+          ForwardsValues:
+            QueryString: false 
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+        # ViewerCertificate:
+        #   AcmCertificateArn: !Ref 
+
+
+
+
+
+  CounterFunctionCloudResume:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: VisitCountFunc/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      FunctionName: cloudresumechallenge2-api
+      Events:
+        VisitorCountAPI:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /VisitorCount
+            Method: get
+      
+  LambdaExecutionRoleCloudResume:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: LambdaGetItemDynamoDBAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            #Resource: !GetAtt 'DynaDBTableCloudResume.Arn'
+            Resource: 'arn:aws:dynamodb:us-east-1:427480290040:table/cloudresumechallenge2'
+
+
+  DynaDBTableCloudResume:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - 
+          AttributeName: 'id'
+          AttributeType: 'S'
+      KeySchema: 
+        -  
+          AttributeName: 'id'
+          KeyType: 'HASH'
+      BillingMode: 'PAY_PER_REQUEST'
+      TableName: 'DynaDBTableCloudResume'
+      
+Outputs:
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/VisitorCount/"
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt CounterFunctionCloudResume.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt CounterFunctionCloudResume.Arn
+
+
+
+
+

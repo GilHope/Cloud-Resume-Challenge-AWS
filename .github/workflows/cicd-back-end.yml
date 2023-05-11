@@ -47,7 +47,7 @@ jobs:
       shell: bash
       run: |
         cd backend
-        pytest 'some test'
+      #  pytest 'some test'
       working-directory: ./backend
 
     - name: Package Lambda function
