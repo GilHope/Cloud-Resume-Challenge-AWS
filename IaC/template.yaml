@@ -24,37 +24,52 @@ Resources:
   #   Type: AWS::Route53::RecordSet
   #   Properties:
   #     HostedZoneName: ghope.cloud.
-  #     RecordSets:
-  #       - Name: ghope.cloud.
-  #         Type: A
-  #         TTL: 
-  #         ResourceRecords: # old dist - d2gyd4d7n2uavp.cloudfront.net.
-  #           - !GetAtt CloudResumeFront.DomainName
+  #     Name: ghope.cloud.
+  #     Type: A
+  #     AliasTarget:
+  #       DNSName: !GetAtt CloudResumeFront.DomainName
+  #       HostedZoneId: Z0020419160AHHBRDWWNM
 
-  #       - Name: www.ghope.cloud.
-  #         Type: CNAME
-  #         TTL: 300
-  #         ResourceRecords: ghope.cloud.
+  MyDNS:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: Z0020419160AHHBRDWWNM
+      RecordSets:
+        - Name: ghope.cloud.
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !GetAtt CloudResumeFront.DomainName
+              # - CloudResumeFront
+              # - E2DDAT0PGE6TDZ
 
-  #       - Name: ghope.cloud.
-  #         Type: SOA
-  #         TTL: 900
-  #         ResourceRecords: ns-2028.awsdns-61.co.uk. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
+      # ResourceRecords: # old dist - d2gyd4d7n2uavp.cloudfront.net.
+      #   - !GetAtt CloudResumeFront.DomainName
 
-  #       - Name: ghope.cloud
-  #         Type: NS
-  #         TTL: 172800
-  #         ResourceRecords: 
-  #           - ns-2028.awsdns-61.co.uk.
-  #             ns-1082.awsdns-07.org.
-  #             ns-515.awsdns-00.net.
-  #             ns-476.awsdns-59.com.
+        # - Name: www.ghope.cloud.
+        #   Type: CNAME
+        #   TTL: 300
+        #   ResourceRecords: ghope.cloud.
 
-  # MyCertificate:
-  #   Type: AWS::CertificateManager::Certificate
-  #   Properties:
-  #     DomainName: ghope.cloud
-  #     ValidationMethod: DNS
+        # - Name: ghope.cloud.
+        #   Type: SOA
+        #   TTL: 900
+        #   ResourceRecords: ns-2028.awsdns-61.co.uk. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
+
+        # - Name: ghope.cloud
+        #   Type: NS
+        #   TTL: 172800
+        #   ResourceRecords: 
+        #     - ns-2028.awsdns-61.co.uk.
+        #       ns-1082.awsdns-07.org.
+        #       ns-515.awsdns-00.net.
+        #       ns-476.awsdns-59.com.
+
+  MyCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: ghope.cloud
+      ValidationMethod: DNS
 
   CloudResumeBucket:
     Type: AWS::S3::Bucket
@@ -94,19 +109,19 @@ Resources:
             S3OriginConfig:
               OriginAccessIdentity: ""
         Enabled: true
-        # DefaultRootObject: index.html
+        DefaultRootObject: index.html
         PriceClass: PriceClass_All
 
-        CacheBehaviors:
-          - PathPattern: "*"
-            TargetOriginId: S3Origin
-            # Origin and Origin groups??
-            # Compress objects automatically??
-            ViewerProtocolPolicy: https-only
-            AllowedMethods:
-              - GET
-              - HEAD
-            Compress: true
+        # CacheBehaviors:
+        #   - PathPattern: "*"
+        #     TargetOriginId: S3Origin
+        #     # Origin and Origin groups??
+        #     # Compress objects automatically??
+        #     ViewerProtocolPolicy: https-only
+        #     AllowedMethods:
+        #       - GET
+        #       - HEAD
+        #     Compress: true
 
         # DefaultCacheBehavior:
         #   TargetOriginId: S3Origin
@@ -119,8 +134,10 @@ Resources:
             QueryString: false 
           TargetOriginId: S3Origin
           ViewerProtocolPolicy: redirect-to-https
-        # ViewerCertificate:
-        #   AcmCertificateArn: !Ref MyCertificate
+
+        ViewerCertificate:
+          AcmCertificateArn: !Ref MyCertificate
+          SslSupportMethod: sni-only
         Restrictions:
           GeoRestriction:
             RestrictionType: none
