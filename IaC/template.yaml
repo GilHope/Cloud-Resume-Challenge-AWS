@@ -11,12 +11,55 @@ Globals:
     Timeout: 5
     MemorySize: 128
 
+Parameters:
+
+  BucketName:
+    Type: String
+    Description: Name of my S3 bucket.
+    Default: cloudresumebucket1234212321
+
 Resources:
+
+  # MyRecordSet:
+  #   Type: AWS::Route53::RecordSet
+  #   Properties:
+  #     HostedZoneName: ghope.cloud.
+  #     RecordSets:
+  #       - Name: ghope.cloud.
+  #         Type: A
+  #         TTL: 
+  #         ResourceRecords: # old dist - d2gyd4d7n2uavp.cloudfront.net.
+  #           - !GetAtt CloudResumeFront.DomainName
+
+  #       - Name: www.ghope.cloud.
+  #         Type: CNAME
+  #         TTL: 300
+  #         ResourceRecords: ghope.cloud.
+
+  #       - Name: ghope.cloud.
+  #         Type: SOA
+  #         TTL: 900
+  #         ResourceRecords: ns-2028.awsdns-61.co.uk. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
+
+  #       - Name: ghope.cloud
+  #         Type: NS
+  #         TTL: 172800
+  #         ResourceRecords: 
+  #           - ns-2028.awsdns-61.co.uk.
+  #             ns-1082.awsdns-07.org.
+  #             ns-515.awsdns-00.net.
+  #             ns-476.awsdns-59.com.
+
+  # MyCertificate:
+  #   Type: AWS::CertificateManager::Certificate
+  #   Properties:
+  #     DomainName: ghope.cloud
+  #     ValidationMethod: DNS
 
   CloudResumeBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: cloud-resume-challenge-2-1234123421
+      BucketName: !Ref BucketName
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -27,29 +70,95 @@ Resources:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
       AccessControl: Private
-      #BucketKeyEnabled: true ????
+  #     BucketKeyEnabled: true ????
+
+
+  OriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        # Name: !GetAtt CloudResumeBucket.DomainName
+        Name: !Sub "${CloudResumeBucket}.s3.amazonaws.com"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
 
   CloudResumeFront:
-    Type: AWS::Cloudfront::Distribution
+    Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName: !Ref ghope.cloud.DomainName
-            Id: S3Origin
+          - Id: S3Origin
+            OriginAccessControlId: !Ref OriginAccessControl
+            DomainName: !GetAtt CloudResumeBucket.DomainName
+            S3OriginConfig:
+              OriginAccessIdentity: ""
         Enabled: true
         # DefaultRootObject: index.html
         PriceClass: PriceClass_All
+
+        CacheBehaviors:
+          - PathPattern: "*"
+            TargetOriginId: S3Origin
+            # Origin and Origin groups??
+            # Compress objects automatically??
+            ViewerProtocolPolicy: https-only
+            AllowedMethods:
+              - GET
+              - HEAD
+            Compress: true
+
+        # DefaultCacheBehavior:
+        #   TargetOriginId: S3Origin
+        #   ViewerProtocolPolicy: https-only
+        #   ForwardedValues:
+        #     QueryString: false
+
         DefaultCacheBehavior:
-          ForwardsValues:
+          ForwardedValues:
             QueryString: false 
           TargetOriginId: S3Origin
           ViewerProtocolPolicy: redirect-to-https
         # ViewerCertificate:
-        #   AcmCertificateArn: !Ref 
+        #   AcmCertificateArn: !Ref MyCertificate
+        Restrictions:
+          GeoRestriction:
+            RestrictionType: none
+          
+
+  MyBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref CloudResumeBucket
+      PolicyDocument:
+        Version: "2008-10-17"
+        Statement:
+          - Sid: AllowCloudFrontServicePrincipal
+            Effect: Allow
+            Principal: 
+               Service: "cloudfront.amazonaws.com"
+            Action: "s3:GetObject"
+            Resource: !Sub "arn:aws:s3:::${CloudResumeBucket}/*"
+            Condition:
+              StringEquals: 
+                "AWS:SourceArn": !Sub "arn:aws:cloudfront::427480290040:distribution/${CloudResumeFront}"
+
+  #         - Sid: AllowGitHubActions
+  #           Effect: Allow
+  #           Principal:  
+  #             AWS: arn:aws:iam::427480290040:user/cloud-resume-user
+  #           Action:
+  #             - s3:GetObject
+  #             - s3:PutObject
+  #             - s3:ListBucket 
+  #           Resource:
+  #             - !GetAtt CloudResumeBucket.Arn
+  #             - !GetAtt CloudResumeBucket.Arn/*
 
 
 
 
+  # Serverless 
 
   CounterFunctionCloudResume:
     Type: AWS::Serverless::Function
@@ -59,7 +168,8 @@ Resources:
       Runtime: python3.9
       Architectures:
         - x86_64
-      FunctionName: cloudresumechallenge2-api
+      FunctionName: CounterFunctionCloudResume
+      Role: !GetAtt LambdaExecutionRoleCloudResume.Arn
       Events:
         VisitorCountAPI:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -87,8 +197,8 @@ Resources:
             Action:
             - dynamodb:GetItem
             - dynamodb:PutItem
-            #Resource: !GetAtt 'DynaDBTableCloudResume.Arn'
-            Resource: 'arn:aws:dynamodb:us-east-1:427480290040:table/cloudresumechallenge2'
+            Resource: !GetAtt 'DynaDBTableCloudResume.Arn'
+            # Resource: 'arn:aws:dynamodb:us-east-1:427480290040:table/cloudresumechallenge2'
 
 
   DynaDBTableCloudResume:
