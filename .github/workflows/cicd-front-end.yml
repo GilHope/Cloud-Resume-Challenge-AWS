@@ -29,6 +29,7 @@ jobs:
     # Running cloudfront invalidate so old website files are removed from cache.
     # https://docs.aws.amazon.com/cli/latest/reference/cloudfront/create-invalidation.html
     - name: Cloudfront create-invalidation
-      run: aws cloudfront create-invalidation --distribution-id E25PTMM0VI4A49 --paths "/*"       
+      # run: aws cloudfront create-invalidation --distribution-id E25PTMM0VI4A49 --paths "/*"
+      run: aws cloudfront create-invalidation --distribution-id E2DDAT0PGE6TDZ --paths "/*"       
         
         
