@@ -29,7 +29,7 @@ Resources:
   #     AliasTarget:
   #       DNSName: !GetAtt CloudResumeFront.DomainName
   #       HostedZoneId: Z0020419160AHHBRDWWNM
-
+####################################
   MyDNS:
     Type: AWS::Route53::RecordSetGroup
     Properties:
@@ -42,6 +42,16 @@ Resources:
             DNSName: !GetAtt CloudResumeFront.DomainName
               # - CloudResumeFront
               # - E2DDAT0PGE6TDZ
+
+  # MyCNameRecord:
+  #   Type: AWS::Route53::RecordSet
+  #   Properties:
+  #     HostedZoneId: Z0020419160AHHBRDWWNM
+  #     Name: ghope.cloud.
+  #     Type: CNAME
+  #     TTL: 300
+  #     ResourceRecords:
+  #       - !GetAtt CloudResumeFront.DomainName
 
       # ResourceRecords: # old dist - d2gyd4d7n2uavp.cloudfront.net.
       #   - !GetAtt CloudResumeFront.DomainName
@@ -85,14 +95,12 @@ Resources:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
       AccessControl: Private
-  #     BucketKeyEnabled: true ????
 
 
   OriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
       OriginAccessControlConfig:
-        # Name: !GetAtt CloudResumeBucket.DomainName
         Name: !Sub "${CloudResumeBucket}.s3.amazonaws.com"
         OriginAccessControlOriginType: s3
         SigningBehavior: always
@@ -102,6 +110,8 @@ Resources:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
+        Aliases:
+          - ghope.cloud
         Origins:
           - Id: S3Origin
             OriginAccessControlId: !Ref OriginAccessControl
@@ -111,29 +121,14 @@ Resources:
         Enabled: true
         DefaultRootObject: index.html
         PriceClass: PriceClass_All
-
-        # CacheBehaviors:
-        #   - PathPattern: "*"
-        #     TargetOriginId: S3Origin
-        #     # Origin and Origin groups??
-        #     # Compress objects automatically??
-        #     ViewerProtocolPolicy: https-only
-        #     AllowedMethods:
-        #       - GET
-        #       - HEAD
-        #     Compress: true
-
-        # DefaultCacheBehavior:
-        #   TargetOriginId: S3Origin
-        #   ViewerProtocolPolicy: https-only
-        #   ForwardedValues:
-        #     QueryString: false
-
+        
         DefaultCacheBehavior:
           ForwardedValues:
             QueryString: false 
           TargetOriginId: S3Origin
           ViewerProtocolPolicy: redirect-to-https
+          
+
 
         ViewerCertificate:
           AcmCertificateArn: !Ref MyCertificate
@@ -242,6 +237,10 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt CounterFunctionCloudResume.Arn
+
+
+  HelloWorldDistribtionOutput:
+    Value: !GetAtt CloudResumeFront.DomainName
 
 
 

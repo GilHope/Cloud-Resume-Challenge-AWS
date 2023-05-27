@@ -1,72 +1,63 @@
-import json
 
-import pytest
-
-from VisitCountFunc import app
-
-
-@pytest.fixture()
-def apigw_event():
-    """ Generates API GW Event"""
-
-    return {
-        "body": '{ "test": "body"}',
-        "resource": "/{proxy+}",
-        "requestContext": {
-            "resourceId": "123456",
-            "apiId": "1234567890",
-            "resourcePath": "/{proxy+}",
-            "httpMethod": "POST",
-            "requestId": "c6af9ac6-7b61-11e6-9a41-93e8deadbeef",
-            "accountId": "123456789012",
-            "identity": {
-                "apiKey": "",
-                "userArn": "",
-                "cognitoAuthenticationType": "",
-                "caller": "",
-                "userAgent": "Custom User Agent String",
-                "user": "",
-                "cognitoIdentityPoolId": "",
-                "cognitoIdentityId": "",
-                "cognitoAuthenticationProvider": "",
-                "sourceIp": "127.0.0.1",
-                "accountId": "",
-            },
-            "stage": "prod",
-        },
-        "queryStringParameters": {"foo": "bar"},
-        "headers": {
-            "Via": "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)",
-            "Accept-Language": "en-US,en;q=0.8",
-            "CloudFront-Is-Desktop-Viewer": "true",
-            "CloudFront-Is-SmartTV-Viewer": "false",
-            "CloudFront-Is-Mobile-Viewer": "false",
-            "X-Forwarded-For": "127.0.0.1, 127.0.0.2",
-            "CloudFront-Viewer-Country": "US",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-            "Upgrade-Insecure-Requests": "1",
-            "X-Forwarded-Port": "443",
-            "Host": "1234567890.execute-api.us-east-1.amazonaws.com",
-            "X-Forwarded-Proto": "https",
-            "X-Amz-Cf-Id": "aaaaaaaaaae3VYQb9jd-nvCd-de396Uhbp027Y2JvkCPNLmGJHqlaA==",
-            "CloudFront-Is-Tablet-Viewer": "false",
-            "Cache-Control": "max-age=0",
-            "User-Agent": "Custom User Agent String",
-            "CloudFront-Forwarded-Proto": "https",
-            "Accept-Encoding": "gzip, deflate, sdch",
-        },
-        "pathParameters": {"proxy": "/examplepath"},
-        "httpMethod": "POST",
-        "stageVariables": {"baz": "qux"},
-        "path": "/examplepath",
-    }
+# from VisitCountFunc import app# 
+# # Pytest Unit Test:
+# import json
+# import boto3
+# import pytest
+# from moto import mock_dynamodb
 
 
-def test_lambda_handler(apigw_event):
+# # The 'mock_dynamodb2' decorator is used to mimic DynamoDB for testing
+# @mock_dynamodb
+# def test_lambda_handler():
+#     # DynamoDB resource is initialized
+#     dynamodb = boto3.resource('dynamodb')
+#     # Table name is stored in a variable
+#     table_name = 'DynaDBTableCloudResume'
+#     # Table is created with the necessary schema and throughput specifications
+#     dynamodb.create_table(
+#         TableName=table_name,
+#         KeySchema=[{'AttributeName': 'id', 'KeyType': 'HASH'}],
+#         AttributeDefinitions=[{'AttributeName': 'id', 'AttributeType': 'N'}],
+#         ProvisionedThroughput={'ReadCapacityUnits': 10, 'WriteCapacityUnits': 10}
+#     )
+#     # The created table is fetched
+#     table = dynamodb.Table(table_name)
+#     # Initial view count is stored in a variable
+#     initial_count = 0
+#     # A record is added to the table with the initial view count
+#     table.put_item(Item={'id' : 0, 'view_count': initial_count})
 
-    ret = app.lambda_handler(apigw_event, "")
-    data = json.loads(ret["body"])
+#     # The Lambda function is called, and we assert that it returns the incremented view count
+#     new_view_count = app.lambda_handler(None, None)
+#     assert new_view_count == initial_count + 1
 
-    assert ret["statusCode"] == 200
-    assert "message" in ret["body"]
-    assert data["message"] == "hello world"
+#     # The record is fetched from the table again
+#     response = table.get_item(Key={'id': 0})
+#     # The stored view count is fetched from the response
+#     stored_count = response['Item']['view_count']
+#     # We assert that the stored view count is the incremented view count
+#     assert stored_count == initial_count + 1
+
+
+import unittest
+from unittest.mock import patch, MagicMock
+from VisitCountFunc import app  # replace 'VisitCountFunc' with the name of your Python file
+
+class TestLambdaHandler(unittest.TestCase):
+    @patch('VisitCountFunc.app.table')
+    def test_lambda_handler(self, table_mock):
+        # Set up the mock object
+        get_item_response_mock = {'Item': {'id': '0', 'view_count': 1}}
+        table_mock.get_item.return_value = get_item_response_mock
+
+        # Run the function
+        result = app.lambda_handler({}, {})
+
+        # Assert the results
+        self.assertEqual(result, 2)
+        table_mock.get_item.assert_called_once_with(Key={'id': '0'})
+        table_mock.put_item.assert_called_once_with(Item={'id': '0', 'view_count': 2})
+
+if __name__ == '__main__':
+    unittest.main()
