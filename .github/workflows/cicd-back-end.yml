@@ -1,61 +1,112 @@
+# name: Backend CI/CD
+
+# on:
+#   push:
+#     branches:
+#       - main
+#     #paths:
+#     #  - 'backend/**'
+
+# jobs:
+#   test-lambda:
+#     permissions:
+#       id-token: write
+#       contents: read
+#     runs-on: ubuntu-latest
+
+#     steps: 
+
+#     - name: Checkout code
+#       uses: actions/checkout@v2
+#       with:
+#         path: 'backend'
+
+#     - name: Setup Python
+#       uses: actions/setup-python@v2
+#       with:
+#         python-version: '3.9'
+
+#     - name: Upgrade pip
+#       run: python -m pip install --upgrade pip
+
+#     - name: Install Dependencies
+#       run: |
+#         cd backend
+#         python -m pip install --upgrade pip
+#         pip install flake8 pytest
+#         pip install -r requirements.txt
+#       working-directory: ./backend
+
+#     - name: Configure AWS credentials
+#       uses: aws-actions/configure-aws-credentials@v2
+#       with:
+#         aws-region: 'us-east-1'
+#         role-to-assume: ${{ secrets.ROLE_TO_ASSUME }} #setup role as secret
+
+#     - name: Test Lambda with pytest
+#       shell: bash
+#       run: |
+#         cd backend
+#       #  pytest 'some test'
+#       working-directory: ./backend
+
+#     - name: Package Lambda function
+#       if: ${{ job.status == 'success' }}
+#       run: |
+#         cd backend
+#         zip -r9 count.zip count.py
+#       working-directory: ./backend
+
+# #------------------------------------------------------------------------------
+
 name: Backend CI/CD
 
 on:
   push:
     branches:
-      - main
-    #paths:
-    #  - 'backend/**'
+    - main
+    paths:
+    - 'backend/**'
 
 jobs:
-  test-lambda:
-    permissions:
-      id-token: write
-      contents: read
+  deploy:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    steps: 
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
 
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        path: 'backend'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install aws-sam-cli
 
-    - name: Setup Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
+      - name: Run tests
+        run: pytest IaC/tests/unit/
 
-    - name: Upgrade pip
-      run: python -m pip install --upgrade pip
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
 
-    - name: Install Dependencies
-      run: |
-        cd backend
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        pip install -r requirements.txt
-      working-directory: ./backend
+      - name: SAM Build
+        run: sam build
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-region: 'us-east-1'
-        role-to-assume: ${{ secrets.ROLE_TO_ASSUME }} #setup role as secret
+      - name: SAM Package
+        run: |
+          sam package --template-file .aws-sam/build/template.yaml --output-template-file packaged.yaml --s3-bucket ${{ secrets.AWS_S3_BUCKET }}
 
-    - name: Test Lambda with pytest
-      shell: bash
-      run: |
-        cd backend
-      #  pytest 'some test'
-      working-directory: ./backend
-
-    - name: Package Lambda function
-      if: ${{ job.status == 'success' }}
-      run: |
-        cd backend
-        zip -r9 count.zip count.py
-      working-directory: ./backend
-
-#------------------------------------------------------------------------------
-
+      - name: SAM Deploy
+        run: |
+          sam deploy --template-file packaged.yaml --stack-name IaC --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-1'
