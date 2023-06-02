@@ -76,5 +76,6 @@ def lambda_handler(event, context):
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin" : "*",
         },
-        "body": json.dumps(view_count)
+        # "body": json.dumps(view_count)
+        "body": view_count 
     }
