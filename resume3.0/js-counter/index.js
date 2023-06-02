@@ -19,7 +19,7 @@ window.addEventListener('load', async (event) => {
 
     console.log('API response data:', data); // log full response
 
-    let visitorCount = data; // use data directly as it's a number
+    let visitorCount = "Total Visitors: " + data; // use data directly as it's a number
     let counterElement = document.querySelector('.counter-number');
 
     if (counterElement) {
