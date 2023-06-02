@@ -14,7 +14,7 @@
 // updateCounter(); 
 
 document.addEventListener("DOMContentLoaded", function() {
-    const counter = document.querySelector(".counter-number");
+    const counter = document.querySelector(".email");
     async function updateCounter()  {
         let response = await fetch("https://25h2mgx3kj.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount");
         let data = await response.json();
