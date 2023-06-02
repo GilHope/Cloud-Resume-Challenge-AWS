@@ -11,6 +11,12 @@ Globals:
     Timeout: 5
     MemorySize: 128
 
+  # Api:
+  #   Cors:
+  #     AllowMethods: "'*'"
+  #     AllowHeaders: "'*'"
+  #     AllowOrigin: "'*'"
+
 Parameters:
 
   BucketName:
