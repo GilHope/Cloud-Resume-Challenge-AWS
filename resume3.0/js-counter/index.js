@@ -7,9 +7,9 @@ async function updateCounter()  {
     let response = await fetch("https://25h2mgx3kj.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount");
     let data = await response.json();
     console.log(data);  // log the response data
-    // counter.innerHTML = ` Total Visitors: ${data.body}`;
+    counter.innerHTML = ` Total Visitors: ${data.body}`;
     // counter.innerHTML = ` Total Visitors: ${JSON.parse(data.body)}`;
-    counter.innerHTML = ` Total Visitors: ${data}`;
+    // counter.innerHTML = ` Total Visitors: ${data}`;
 }
 
 updateCounter();
