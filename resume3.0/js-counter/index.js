@@ -13,17 +13,34 @@
 
 // updateCounter(); 
 
+// window.addEventListener('load', async (event) => {
+//     const response = await fetch('https://25h2mgx3kj.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
+//     let data = await response.json();
+
+//     console.log('API response data:', data); // log full response
+
+//     let visitorCount = "Total Visitors: " + data; // use data directly as it's a number
+//     let counterElement = document.querySelector('.counter-number');
+
+//     if (counterElement) {
+//         counterElement.textContent = visitorCount;
+//     }
+// });
+
 window.addEventListener('load', async (event) => {
     const response = await fetch('https://25h2mgx3kj.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
     let data = await response.json();
 
     console.log('API response data:', data); // log full response
 
-    let visitorCount = "Total Visitors: " + data; // use data directly as it's a number
+    let visitorCount = "Total Visitors: " + data.body.view_count; // extract view_count from body
     let counterElement = document.querySelector('.counter-number');
 
     if (counterElement) {
         counterElement.textContent = visitorCount;
     }
 });
+
+
+
 
