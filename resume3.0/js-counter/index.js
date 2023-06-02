@@ -8,6 +8,7 @@ async function updateCounter()  {
     let data = await response.json();
     console.log(data);  // log the response data
     counter.innerHTML = ` Total Visitors: ${data.body}`;
+    counter.innerHTML = ` Total Visitors: ${JSON.parse(data.body)}`;
 }
 
 updateCounter();
