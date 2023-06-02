@@ -82,7 +82,8 @@ class TestLambdaHandler(unittest.TestCase):
         result = json.loads(response['body'])
 
         # Assert the results
-        self.assertEqual(result, initial_view_count + 1)
+        # self.assertEqual(result, initial_view_count + 1)
+        self.assertEqual(result['view_count'], initial_view_count + 1)
         table_mock.get_item.assert_called_once_with(Key={'id': '0'})
         table_mock.put_item.assert_called_once_with(Item={'id': '0', 'view_count': initial_view_count + 1})
 
@@ -99,7 +100,8 @@ class TestLambdaHandler(unittest.TestCase):
         result = json.loads(response['body'])
 
         # Assert the results
-        self.assertEqual(result, 1)  # Assumes function initializes count to 1 if no initial item
+        # self.assertEqual(result, 1)  # Assumes function initializes count to 1 if no initial item
+        self.assertEqual(result['view_count'], 1)
         table_mock.get_item.assert_called_once_with(Key={'id': '0'})
         table_mock.put_item.assert_called_once_with(Item={'id': '0', 'view_count': 1})
 
