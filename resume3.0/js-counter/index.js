@@ -19,6 +19,7 @@ async function updateCounter()  {
     // let response = await fetch("https://25h2mgx3kj.execute-api.us-east-1.amazonaws.com/VisitorCount");
     let response = await fetch("https://25h2mgx3kj.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount");
     let data = await response.json();
+    console.log('API response data:', data);
     // console.log(data);  // log the response data
     console.log(response);
     console.log('Total visitors:', data.body);
