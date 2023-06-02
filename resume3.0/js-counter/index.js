@@ -33,13 +33,15 @@ window.addEventListener('load', async (event) => {
 
     console.log('API response data:', data); // log full response
 
-    let visitorCount = "Total Visitors: " + data.body.view_count; // extract view_count from body
+    let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
     let counterElement = document.querySelector('.counter-number');
 
     if (counterElement) {
         counterElement.textContent = visitorCount;
     }
 });
+
+
 
 
 
