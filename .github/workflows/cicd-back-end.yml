@@ -85,19 +85,19 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install aws-sam-cli
       #look here
-      - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/IaC" >> $GITHUB_ENV
+      # - name: Set PYTHONPATH
+      #   run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/IaC" >> $GITHUB_ENV
 
       - name: Run tests
         run: pytest IaC/tests/unit/ 
         env:
           AWS_DEFAULT_REGION: 'us-east-1'
 
-      - name: Install AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
+      # - name: Install AWS CLI
+      #   run: |
+      #     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      #     unzip awscliv2.zip
+      #     sudo ./aws/install
 
       - name: SAM Build
         run: sam build
