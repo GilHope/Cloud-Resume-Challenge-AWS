@@ -106,6 +106,10 @@ jobs:
       - name: SAM Package
         run: |
           sam package --region us-east-1 --template-file .aws-sam/build/template.yaml --output-template-file packaged.yaml --s3-bucket ${{ secrets.AWS_S3_BUCKET }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-1'
 
       - name: SAM Deploy
         run: |
