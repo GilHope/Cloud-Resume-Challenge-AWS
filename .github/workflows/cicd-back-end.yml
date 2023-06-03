@@ -89,7 +89,9 @@ jobs:
         run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/IaC" >> $GITHUB_ENV
 
       - name: Run tests
-        run: pytest IaC/tests/unit/
+        run: pytest IaC/tests/unit/ 
+        env:
+          AWS_DEFAULT_REGION: 'us-east-1'
 
       - name: Install AWS CLI
         run: |
