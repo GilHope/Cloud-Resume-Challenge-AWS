@@ -61,10 +61,6 @@ from VisitCountFunc import app  # replace 'VisitCountFunc' with the name of your
 #     unittest.main()
 
 ############################################################################################
-import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../VisitCountFunc')))
-
 import json
 import unittest
 from unittest.mock import patch, MagicMock

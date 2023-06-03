@@ -65,8 +65,6 @@ on:
   push:
     branches:
     - main
-    # paths:
-    # - 'backend/**'
 
 jobs:
   deploy:
@@ -86,6 +84,9 @@ jobs:
           pip install pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install aws-sam-cli
+      #look here
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/IaC" >> $GITHUB_ENV
 
       - name: Run tests
         run: pytest IaC/tests/unit/
