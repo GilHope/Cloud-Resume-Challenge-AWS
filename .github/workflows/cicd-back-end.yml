@@ -105,7 +105,7 @@ jobs:
 
       - name: SAM Package
         run: |
-          sam package --template-file .aws-sam/build/template.yaml --output-template-file packaged.yaml --s3-bucket ${{ secrets.AWS_S3_BUCKET }}
+          sam package --region us-east-1 --template-file .aws-sam/build/template.yaml --output-template-file packaged.yaml --s3-bucket ${{ secrets.AWS_S3_BUCKET }}
 
       - name: SAM Deploy
         run: |
