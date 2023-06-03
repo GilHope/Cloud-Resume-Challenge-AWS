@@ -58,7 +58,8 @@ jobs:
       id: get_distribution_id
       run: |
         DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[0] == 'ghope.cloud'].Id" --output text --region us-east-1)
-        echo "::set-output name=distribution_id::$DISTRIBUTION_ID"
+        echo "::set-output name=distribution_id::$DISTRIBUTION_ID | awk -F'/' '{print $2}'"
+
 
     - name: Cloudfront create-invalidation
       run: aws cloudfront create-invalidation --distribution-id ${{ steps.get_distribution_id.outputs.distribution_id }} --paths "/*"
