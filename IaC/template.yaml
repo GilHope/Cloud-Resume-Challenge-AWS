@@ -175,21 +175,27 @@ Resources:
       TableName: 'DynaDBTableCloudResume'
       
 Outputs:
+
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/VisitorCount/"
+
   HelloWorldFunction:
     Description: "Hello World Lambda Function ARN"
     Value: !GetAtt CounterFunctionCloudResume.Arn
+
   HelloWorldFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt CounterFunctionCloudResume.Arn
 
-
   HelloWorldDistribtionOutput:
     Value: !GetAtt CloudResumeFront.DomainName
 
-
+  CloudFrontDistributionId:
+    Description: "CloudFront Distribution ID"
+    Value: !Ref CloudResumeFront
+    Export:
+      Name: CloudFrontDistributionId
 
 
 
