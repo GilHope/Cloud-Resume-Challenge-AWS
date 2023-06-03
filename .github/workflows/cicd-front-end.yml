@@ -1,3 +1,37 @@
+# name: Frontend CI/CD
+
+# on:
+#   push:
+#     branches:
+#     - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@master
+
+#     # Starts by configuring AWS credentials using parameter secrets.
+#     # https://github.com/aws-actions/configure-aws-credentials
+#     - name: Configure AWS credentials
+#       uses: aws-actions/configure-aws-credentials@v1
+#       with:
+#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         aws-region: 'us-east-1' 
+
+#     # Run a S3 sync action to upload complete website to the bucket. The '--delete' flag to ensure old files are deleted.
+#     # https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
+#     - name: S3 sync
+#       # run: aws s3 sync ./resume3.0 s3://cloud-resume-challenge-bucket5673442 --delete
+#       run: aws s3 sync ./resume3.0 s3://cloudresumebucket1234212321 --delete
+
+#     # Running cloudfront invalidate so old website files are removed from cache.
+#     # https://docs.aws.amazon.com/cli/latest/reference/cloudfront/create-invalidation.html
+#     - name: Cloudfront create-invalidation
+#       # run: aws cloudfront create-invalidation --distribution-id E25PTMM0VI4A49 --paths "/*"
+#       run: aws cloudfront create-invalidation --distribution-id E2DDAT0PGE6TDZ --paths "/*"       
+        
 name: Frontend CI/CD
 
 on:
@@ -20,16 +54,14 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: 'us-east-1' 
 
-    # Run a S3 sync action to upload complete website to the bucket. The '--delete' flag to ensure old files are deleted.
-    # https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
-    - name: S3 sync
-      # run: aws s3 sync ./resume3.0 s3://cloud-resume-challenge-bucket5673442 --delete
-      run: aws s3 sync ./resume3.0 s3://cloudresumebucket1234212321 --delete
+    - name: Get CloudFront distribution ID
+      id: get_distribution_id
+      run: |
+        DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[0] == 'ghope.cloud'].Id" --output text --region us-east-1)
+        echo "::set-output name=distribution_id::$DISTRIBUTION_ID"
 
-    # Running cloudfront invalidate so old website files are removed from cache.
-    # https://docs.aws.amazon.com/cli/latest/reference/cloudfront/create-invalidation.html
     - name: Cloudfront create-invalidation
-      # run: aws cloudfront create-invalidation --distribution-id E25PTMM0VI4A49 --paths "/*"
-      run: aws cloudfront create-invalidation --distribution-id E2DDAT0PGE6TDZ --paths "/*"       
+      run: aws cloudfront create-invalidation --distribution-id ${{ steps.get_distribution_id.outputs.distribution_id }} --paths "/*"
+          
         
-        
+                
