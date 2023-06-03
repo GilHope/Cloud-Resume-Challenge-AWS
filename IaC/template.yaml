@@ -33,9 +33,12 @@ Resources:
             DNSName: !GetAtt CloudResumeFront.DomainName
 
   MyCertificate:
-    Type: AWS::CertificateManager::Certificate
+    Type: "AWS::CertificateManager::Certificate"
     Properties:
       DomainName: ghope.cloud
+      DomainValidationOptions:
+        - DomainName: ghope.cloud
+          HostedZoneId: Z0020419160AHHBRDWWNM
       ValidationMethod: DNS
 
   CloudResumeBucket:
@@ -85,8 +88,6 @@ Resources:
           TargetOriginId: S3Origin
           ViewerProtocolPolicy: redirect-to-https
           
-
-
         ViewerCertificate:
           AcmCertificateArn: !Ref MyCertificate
           SslSupportMethod: sni-only
