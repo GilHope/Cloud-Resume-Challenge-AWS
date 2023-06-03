@@ -62,7 +62,10 @@ jobs:
 
 
     - name: Cloudfront create-invalidation
-      run: aws cloudfront create-invalidation --distribution-id ${{ steps.get_distribution_id.outputs.distribution_id }} --paths "/*"
+      run: |
+        DISTRIBUTION_ID=$(echo "${{ steps.get_distribution_id.outputs.distribution_id }}" | awk -F'/' '{print $2}')
+        aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
+
           
         
                 
