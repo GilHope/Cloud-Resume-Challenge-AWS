@@ -111,6 +111,9 @@ def lambda_handler(event, context):
         "headers": { 
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin" : "*",
+            "Access-Control-Allow-Methods": "GET",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Credentials": "false"
         },
         "body": json.dumps({
             'view_count': view_count 
