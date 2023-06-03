@@ -11,11 +11,6 @@ Globals:
     Timeout: 5
     MemorySize: 128
 
-  # Api:
-  #   Cors:
-  #     AllowMethods: "'*'"
-  #     AllowHeaders: "'*'"
-  #     AllowOrigin: "'*'"
 
 Parameters:
 
@@ -26,16 +21,6 @@ Parameters:
 
 Resources:
 
-  # MyRecordSet:
-  #   Type: AWS::Route53::RecordSet
-  #   Properties:
-  #     HostedZoneName: ghope.cloud.
-  #     Name: ghope.cloud.
-  #     Type: A
-  #     AliasTarget:
-  #       DNSName: !GetAtt CloudResumeFront.DomainName
-  #       HostedZoneId: Z0020419160AHHBRDWWNM
-####################################
   MyDNS:
     Type: AWS::Route53::RecordSetGroup
     Properties:
@@ -46,40 +31,6 @@ Resources:
           AliasTarget:
             HostedZoneId: Z2FDTNDATAQYW2
             DNSName: !GetAtt CloudResumeFront.DomainName
-              # - CloudResumeFront
-              # - E2DDAT0PGE6TDZ
-
-  # MyCNameRecord:
-  #   Type: AWS::Route53::RecordSet
-  #   Properties:
-  #     HostedZoneId: Z0020419160AHHBRDWWNM
-  #     Name: ghope.cloud.
-  #     Type: CNAME
-  #     TTL: 300
-  #     ResourceRecords:
-  #       - !GetAtt CloudResumeFront.DomainName
-
-      # ResourceRecords: # old dist - d2gyd4d7n2uavp.cloudfront.net.
-      #   - !GetAtt CloudResumeFront.DomainName
-
-        # - Name: www.ghope.cloud.
-        #   Type: CNAME
-        #   TTL: 300
-        #   ResourceRecords: ghope.cloud.
-
-        # - Name: ghope.cloud.
-        #   Type: SOA
-        #   TTL: 900
-        #   ResourceRecords: ns-2028.awsdns-61.co.uk. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
-
-        # - Name: ghope.cloud
-        #   Type: NS
-        #   TTL: 172800
-        #   ResourceRecords: 
-        #     - ns-2028.awsdns-61.co.uk.
-        #       ns-1082.awsdns-07.org.
-        #       ns-515.awsdns-00.net.
-        #       ns-476.awsdns-59.com.
 
   MyCertificate:
     Type: AWS::CertificateManager::Certificate
@@ -161,17 +112,7 @@ Resources:
               StringEquals: 
                 "AWS:SourceArn": !Sub "arn:aws:cloudfront::427480290040:distribution/${CloudResumeFront}"
 
-  #         - Sid: AllowGitHubActions
-  #           Effect: Allow
-  #           Principal:  
-  #             AWS: arn:aws:iam::427480290040:user/cloud-resume-user
-  #           Action:
-  #             - s3:GetObject
-  #             - s3:PutObject
-  #             - s3:ListBucket 
-  #           Resource:
-  #             - !GetAtt CloudResumeBucket.Arn
-  #             - !GetAtt CloudResumeBucket.Arn/*
+ 
 
 
 
@@ -194,6 +135,11 @@ Resources:
           Properties:
             Path: /VisitorCount
             Method: get
+            Cors:
+              AllowMethods: "'GET'"
+              AllowHeaders: "'*'"
+              AllowOrigin: "'*'"
+              AllowCredentials: false
       
   LambdaExecutionRoleCloudResume:
     Type: AWS::IAM::Role
@@ -216,7 +162,6 @@ Resources:
             - dynamodb:GetItem
             - dynamodb:PutItem
             Resource: !GetAtt 'DynaDBTableCloudResume.Arn'
-            # Resource: 'arn:aws:dynamodb:us-east-1:427480290040:table/cloudresumechallenge2'
 
 
   DynaDBTableCloudResume:
