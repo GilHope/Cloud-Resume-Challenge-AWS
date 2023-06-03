@@ -57,8 +57,9 @@ jobs:
     - name: Get CloudFront distribution ID
       id: get_distribution_id
       run: |
-        DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[0] == 'ghope.cloud'].Id" --output text --region us-east-1)
-        echo "::set-output name=distribution_id::$DISTRIBUTION_ID | awk -F'/' '{print $2}'"
+        DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[0] == 'ghope.cloud'].Id" --output text --region us-east-1 | awk -F'/' '{print $2}')
+        echo "::set-output name=distribution_id::$DISTRIBUTION_ID"
+
 
 
     - name: Cloudfront create-invalidation
