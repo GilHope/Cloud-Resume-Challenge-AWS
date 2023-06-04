@@ -26,27 +26,45 @@
 //         counterElement.textContent = visitorCount;
 //     }
 // });
+////////////////////////////////////////////////////////////////////
+
+// window.addEventListener('load', async (event) => {
+//     const response = await fetch('https://25h2mgx3kj.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
+//     let data = await response.json();
+
+//     console.log('API response data:', data); // log full response
+
+//     let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
+//     let counterElement = document.querySelector('.counter-number');
+
+//     if (counterElement) {
+//         counterElement.textContent = visitorCount;
+//     }
+// });
+/////////////////////////////////////////////////////////////////////
 
 window.addEventListener('load', async (event) => {
-    // const response = await fetch('https://25h2mgx3kj.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
-    const apiUrl = "https://${{ outputs.HelloWorldApi }}";
-    const response = await fetch(apiUrl);
-
-
-    let data = await response.json();
-
-    console.log('API response data:', data); // log full response
-
-    let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
-    let counterElement = document.querySelector('.counter-number');
-
-    if (counterElement) {
-        counterElement.textContent = visitorCount;
+    const apiUrlResponse = await fetch('https://cloudformation.us-east-1.amazonaws.com/exports/HelloWorldApi');
+    const apiUrlData = await apiUrlResponse.json();
+    const apiUrl = apiUrlData.Exports[0].Value;
+    
+    try {
+      const response = await fetch(apiUrl);
+      if (response.ok) {
+        const data = await response.json();
+        const visitorCount = "Total Visitors: " + data.view_count;
+        const counterElement = document.querySelector('.counter-number');
+        if (counterElement) {
+          counterElement.textContent = visitorCount;
+        }
+      } else {
+        console.error('Error:', response.status);
+      }
+    } catch (error) {
+      console.error('Error:', error);
     }
-});
-
-
-
+  });
+  
 
 
 
