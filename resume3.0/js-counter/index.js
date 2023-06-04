@@ -44,22 +44,30 @@
 /////////////////////////////////////////////////////////////////////
 
 window.addEventListener('load', async (event) => {
-    const apiUrlResponse = await fetch('https://cloudformation.us-east-1.amazonaws.com/exports/HelloWorldApi');
-    const apiUrlData = await apiUrlResponse.json();
-    const apiUrl = apiUrlData.Exports[0].Value;
-    const response = await fetch(apiUrl);
+    const apiUrl = process.env.API_URL;
+    
+    if (!apiUrl) {
+        console.error('API URL environment variable is not set');
+        return;
+    }
 
-    let data = await response.json();
+    try {
+        const response = await fetch(apiUrl);
+        let data = await response.json();
 
-    console.log('API response data:', data); // log full response
+        console.log('API response data:', data); // log full response
 
-    let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
-    let counterElement = document.querySelector('.counter-number');
+        let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
+        let counterElement = document.querySelector('.counter-number');
 
-    if (counterElement) {
-        counterElement.textContent = visitorCount;
+        if (counterElement) {
+            counterElement.textContent = visitorCount;
+        }
+    } catch (error) {
+        console.error('Failed to fetch visitor count:', error);
     }
 });
+
 
   
 
