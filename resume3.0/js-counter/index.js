@@ -44,30 +44,39 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+const AWS = require('aws-sdk');
+const cfn = new AWS.CloudFormation();
+
 window.addEventListener('load', async (event) => {
-    const apiUrl = process.env.API_URL;
-    
-    if (!apiUrl) {
-        console.error('API URL environment variable is not set');
-        return;
+  try {
+    const stackName = 'IaC'; // Replace with your actual stack name
+    const exportName = 'HelloWorldApiUrl'; // Replace with the export name you defined in your template
+
+    const response = await cfn.listExports().promise();
+    const exportValue = response.Exports.find((exp) => exp.Name === exportName);
+
+    if (!exportValue) {
+      console.error(`Export ${exportName} not found`);
+      return;
     }
 
-    try {
-        const response = await fetch(apiUrl);
-        let data = await response.json();
+    const apiUrl = exportValue.Value;
+    const fetchResponse = await fetch(apiUrl);
+    const data = await fetchResponse.json();
 
-        console.log('API response data:', data); // log full response
+    console.log('API response data:', data);
 
-        let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
-        let counterElement = document.querySelector('.counter-number');
+    const visitorCount = "Total Visitors: " + data.view_count;
+    const counterElement = document.querySelector('.counter-number');
 
-        if (counterElement) {
-            counterElement.textContent = visitorCount;
-        }
-    } catch (error) {
-        console.error('Failed to fetch visitor count:', error);
+    if (counterElement) {
+      counterElement.textContent = visitorCount;
     }
+  } catch (error) {
+    console.error('Failed to fetch visitor count:', error);
+  }
 });
+
 
   
 
