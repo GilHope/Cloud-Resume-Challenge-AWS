@@ -44,21 +44,18 @@
 //////////////////////////////////////////////////////
 
 window.addEventListener('load', async (event) => {
-    const apiUrl = process.env.API_URL;
-  
-    if (!apiUrl) {
-      console.error('API URL environment variable is not set');
-      return;
-    }
-  
     try {
+      const apiUrlResponse = await fetch('/api/getApiUrl');
+      const apiUrlData = await apiUrlResponse.json();
+      const apiUrl = apiUrlData.api_url;
+  
       const response = await fetch(apiUrl);
-      let data = await response.json();
+      const data = await response.json();
   
-      console.log('API response data:', data); // log full response
+      console.log('API response data:', data);
   
-      let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
-      let counterElement = document.querySelector('.counter-number');
+      const visitorCount = "Total Visitors: " + data.view_count;
+      const counterElement = document.querySelector('.counter-number');
   
       if (counterElement) {
         counterElement.textContent = visitorCount;
@@ -67,6 +64,7 @@ window.addEventListener('load', async (event) => {
       console.error('Failed to fetch visitor count:', error);
     }
   });
+  
   
 
   
