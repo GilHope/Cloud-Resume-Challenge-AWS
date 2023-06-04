@@ -28,7 +28,9 @@
 // });
 
 window.addEventListener('load', async (event) => {
-    const response = await fetch('https://25h2mgx3kj.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
+    // const response = await fetch('https://25h2mgx3kj.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
+    const apiUrl = "${{ outputs.HelloWorldApi }}";
+    const response = await fetch(apiUrl);
     let data = await response.json();
 
     console.log('API response data:', data); // log full response
