@@ -181,9 +181,6 @@ Outputs:
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/VisitorCount/"
-    ###
-    Export:
-      Name: HelloWorldApiUrl
 
   HelloWorldFunction:
     Description: "Hello World Lambda Function ARN"

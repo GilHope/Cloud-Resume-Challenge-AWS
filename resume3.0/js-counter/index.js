@@ -28,54 +28,21 @@
 // });
 ////////////////////////////////////////////////////////////////////
 
-// window.addEventListener('load', async (event) => {
-//     const response = await fetch('https://gpk55xge05.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
-//     let data = await response.json();
-
-//     console.log('API response data:', data); // log full response
-
-//     let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
-//     let counterElement = document.querySelector('.counter-number');
-
-//     if (counterElement) {
-//         counterElement.textContent = visitorCount;
-//     }
-// });
-
-///////////////////////////////////////////////////////////////////////////////
-
-const AWS = require('aws-sdk');
-const cfn = new AWS.CloudFormation();
-
 window.addEventListener('load', async (event) => {
-  try {
-    const stackName = 'IaC'; // Replace with your actual stack name
-    const exportName = 'HelloWorldApiUrl'; // Replace with the export name you defined in your template
+    const response = await fetch('https://gpk55xge05.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
+    let data = await response.json();
 
-    const response = await cfn.listExports().promise();
-    const exportValue = response.Exports.find((exp) => exp.Name === exportName);
+    console.log('API response data:', data); // log full response
 
-    if (!exportValue) {
-      console.error(`Export ${exportName} not found`);
-      return;
-    }
-
-    const apiUrl = exportValue.Value;
-    const fetchResponse = await fetch(apiUrl);
-    const data = await fetchResponse.json();
-
-    console.log('API response data:', data);
-
-    const visitorCount = "Total Visitors: " + data.view_count;
-    const counterElement = document.querySelector('.counter-number');
+    let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
+    let counterElement = document.querySelector('.counter-number');
 
     if (counterElement) {
-      counterElement.textContent = visitorCount;
+        counterElement.textContent = visitorCount;
     }
-  } catch (error) {
-    console.error('Failed to fetch visitor count:', error);
-  }
 });
+
+
 
 
   
