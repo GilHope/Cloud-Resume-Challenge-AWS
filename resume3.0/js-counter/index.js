@@ -28,22 +28,46 @@
 // });
 ////////////////////////////////////////////////////////////////////
 
+// window.addEventListener('load', async (event) => {
+//     const response = await fetch('https://gpk55xge05.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
+//     let data = await response.json();
+
+//     console.log('API response data:', data); // log full response
+
+//     let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
+//     let counterElement = document.querySelector('.counter-number');
+
+//     if (counterElement) {
+//         counterElement.textContent = visitorCount;
+//     }
+// });
+
+///////////////////////////////////////////////////////////////////////////////
+
 window.addEventListener('load', async (event) => {
-    const response = await fetch('https://gpk55xge05.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
-    let data = await response.json();
+    const apiUrl = process.env.API_URL;
+    
+    if (!apiUrl) {
+        console.error('API URL environment variable is not set');
+        return;
+    }
 
-    console.log('API response data:', data); // log full response
+    try {
+        const response = await fetch(apiUrl);
+        let data = await response.json();
 
-    let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
-    let counterElement = document.querySelector('.counter-number');
+        console.log('API response data:', data); // log full response
 
-    if (counterElement) {
-        counterElement.textContent = visitorCount;
+        let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
+        let counterElement = document.querySelector('.counter-number');
+
+        if (counterElement) {
+            counterElement.textContent = visitorCount;
+        }
+    } catch (error) {
+        console.error('Failed to fetch visitor count:', error);
     }
 });
-
-
-
 
   
 
