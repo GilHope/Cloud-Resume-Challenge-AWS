@@ -28,8 +28,27 @@
 // });
 ////////////////////////////////////////////////////////////////////
 
+// window.addEventListener('load', async (event) => {
+//     const response = await fetch('https://gpk55xge05.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
+//     let data = await response.json();
+
+//     console.log('API response data:', data); // log full response
+
+//     let visitorCount = "Total Visitors: " + data.view_count; // extract view_count directly from data
+//     let counterElement = document.querySelector('.counter-number');
+
+//     if (counterElement) {
+//         counterElement.textContent = visitorCount;
+//     }
+// });
+//////////////////////////////////////////////////////////
+  
 window.addEventListener('load', async (event) => {
-    const response = await fetch('https://gpk55xge05.execute-api.us-east-1.amazonaws.com/Prod/VisitorCount');
+    const apiUrlResponse = await fetch('/api/getApiUrl'); // Replace with the actual path to retrieve the API URL from your server
+    const apiUrlData = await apiUrlResponse.json();
+    const apiUrl = apiUrlData.api_url;
+
+    const response = await fetch(apiUrl);
     let data = await response.json();
 
     console.log('API response data:', data); // log full response
@@ -41,8 +60,6 @@ window.addEventListener('load', async (event) => {
         counterElement.textContent = visitorCount;
     }
 });
-
-  
   
 
   
