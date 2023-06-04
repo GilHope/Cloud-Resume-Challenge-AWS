@@ -53,11 +53,6 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: 'us-east-1' 
-    ###
-    - name: Update API URL
-      run: |
-        API_URL="https://${{ env.AWS_REGION }}.${{ env.ServerlessRestApi }}.execute-api.${{ env.AWS_REGION }}.amazonaws.com/Prod/VisitorCount"
-        echo "API_URL=$API_URL" >> $GITHUB_ENV
 
     # Run a S3 sync action to upload complete website to the bucket. The '--delete' flag to ensure old files are deleted.
     # https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
