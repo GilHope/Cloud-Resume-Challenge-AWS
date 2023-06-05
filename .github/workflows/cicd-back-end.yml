@@ -54,8 +54,8 @@ jobs:
           
       
 
-      # - name: Get API URL 2
-      #   id: get_api_url
-      #   run: |
-      #     API_URL=$(aws cloudformation describe-stacks --stack-name IaC --query "Stacks[0].Outputs[?OutputKey=='HelloWorldApi'].OutputValue" --output text)
-      #     echo "::set-output name=api_url::$API_URL"
+      - name: Get API URL 2
+        id: get_api_url
+        run: |
+          API_URL=$(aws cloudformation describe-stacks --stack-name IaC --query "Stacks[0].Outputs[?OutputKey=='HelloWorldApi'].OutputValue" --output text)
+          echo "::set-output name=api_url::$API_URL"
