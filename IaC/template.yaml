@@ -17,7 +17,7 @@ Parameters:
   BucketName:
     Type: String
     Description: Name of my S3 bucket.
-    Default: cloudresumebucket1234212321
+    Default: cloudresumebucket123474388888
 
 Resources:
 

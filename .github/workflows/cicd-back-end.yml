@@ -69,6 +69,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    needs: cicd-back-end
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
