@@ -17,7 +17,7 @@ Parameters:
   BucketName:
     Type: String
     Description: Name of my S3 bucket.
-    Default: cloudresumebucket12334558888888
+    Default: cloudresumebucket1234212321
 
 Resources:
 
@@ -25,7 +25,7 @@ Resources:
   DummyBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: my-dummy-bucket123442421
+      BucketName: my-dummy-bucket12344242188888
 
 
   MyDNS:
