@@ -21,6 +21,13 @@ Parameters:
 
 Resources:
 
+  #delete after test
+  DummyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: my-dummy-bucket123442421
+
+
   MyDNS:
     Type: AWS::Route53::RecordSetGroup
     Properties:
@@ -199,5 +206,5 @@ Outputs:
     Export:
       Name: CloudFrontDistributionId
 
-  #test
+
 
