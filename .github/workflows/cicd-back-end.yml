@@ -98,6 +98,11 @@ jobs:
       #     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
       #     unzip awscliv2.zip
       #     sudo ./aws/install
+      #######################################################
+      - name: Generate config.js
+        run: |
+          echo "export const apiUrl = '${{ needs.deploy.outputs.HelloWorldApi }}';" > IaC/config.js
+      ########################################################
 
       - name: SAM Build
         # run: sam build
