@@ -92,12 +92,6 @@ jobs:
         run: pytest IaC/tests/unit/ 
         env:
           AWS_DEFAULT_REGION: 'us-east-1'
-          
-      #######################################################
-      - name: Generate config.js
-        run: |
-          echo "export const apiUrl = '${{ needs.deploy.outputs.HelloWorldApi }}';" > IaC/config.js
-      ########################################################
 
       - name: SAM Build
         # run: sam build
