@@ -1,63 +1,4 @@
-# name: Backend CI/CD
 
-# on:
-#   push:
-#     branches:
-#       - main
-#     #paths:
-#     #  - 'backend/**'
-
-# jobs:
-#   test-lambda:
-#     permissions:
-#       id-token: write
-#       contents: read
-#     runs-on: ubuntu-latest
-
-#     steps: 
-
-#     - name: Checkout code
-#       uses: actions/checkout@v2
-#       with:
-#         path: 'backend'
-
-#     - name: Setup Python
-#       uses: actions/setup-python@v2
-#       with:
-#         python-version: '3.9'
-
-#     - name: Upgrade pip
-#       run: python -m pip install --upgrade pip
-
-#     - name: Install Dependencies
-#       run: |
-#         cd backend
-#         python -m pip install --upgrade pip
-#         pip install flake8 pytest
-#         pip install -r requirements.txt
-#       working-directory: ./backend
-
-#     - name: Configure AWS credentials
-#       uses: aws-actions/configure-aws-credentials@v2
-#       with:
-#         aws-region: 'us-east-1'
-#         role-to-assume: ${{ secrets.ROLE_TO_ASSUME }} #setup role as secret
-
-#     - name: Test Lambda with pytest
-#       shell: bash
-#       run: |
-#         cd backend
-#       #  pytest 'some test'
-#       working-directory: ./backend
-
-#     - name: Package Lambda function
-#       if: ${{ job.status == 'success' }}
-#       run: |
-#         cd backend
-#         zip -r9 count.zip count.py
-#       working-directory: ./backend
-
-# #------------------------------------------------------------------------------
 
 name: Backend CI/CD
 
@@ -69,7 +10,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    needs: cicd-back-end
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -85,7 +25,7 @@ jobs:
           pip install pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install aws-sam-cli
-      #look here
+      
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/IaC" >> $GITHUB_ENV
 
@@ -95,7 +35,6 @@ jobs:
           AWS_DEFAULT_REGION: 'us-east-1'
 
       - name: SAM Build
-        # run: sam build
         run: sam build -t IaC/template.yaml
 
       - name: SAM Package
@@ -113,7 +52,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           
-      ################################################################
+      
 
       - name: Get API URL 2
         id: get_api_url
