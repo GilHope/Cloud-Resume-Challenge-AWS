@@ -58,9 +58,11 @@ jobs:
     # https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
     - name: S3 sync
       run: aws s3 sync ./resume3.0 s3://cloudresumebucket1234212321 --delete
-      ############################################################
-      echo "export const apiUrl = '$(cat IaC/config.js)' > ./resume3.0/config.js"
       
+      ############################################################
+    - name: Generate config.js
+      run: echo "export const apiUrl = '$(cat IaC/config.js)'" > ./resume3.0/config.js
+
     - name: Get CloudFront distribution ID
       id: get_distribution_id
       run: |
