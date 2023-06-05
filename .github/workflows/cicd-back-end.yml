@@ -112,9 +112,9 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           
-      ##########################################################
+      ################################################################
 
-      - name: Get API URL
+      - name: Get API URL 1
         id: get_api_url
         run: |
           API_URL=$(aws cloudformation describe-stacks --stack-name IaC --query "Stacks[0].Outputs[?OutputKey=='HelloWorldApi'].OutputValue" --output text)
