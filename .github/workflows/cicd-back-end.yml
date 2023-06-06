@@ -54,13 +54,13 @@ jobs:
           
       
 
-      # - name: Get API URL 2
-      #   id: get_api_url
-      #   run: |
-      #     API_URL=$(aws cloudformation describe-stacks --stack-name IaC --region us-east-1 --query "Stacks[0].Outputs[?OutputKey=='HelloWorldApi'].OutputValue" --output text)
-      #     echo "::set-output name=api_url::$API_URL"
-      #   # echo "API_URL=${API_URL}" >> $GITHUB_ENV suggested update for depreciated run for above
+      - name: Get API URL 2
+        id: get_api_url
+        run: |
+          API_URL=$(aws cloudformation describe-stacks --stack-name IaC --region us-east-1 --query "Stacks[0].Outputs[?OutputKey=='HelloWorldApi'].OutputValue" --output text)
+          echo "::set-output name=api_url::$API_URL"
+        # echo "API_URL=${API_URL}" >> $GITHUB_ENV suggested update for depreciated run for above
           
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
