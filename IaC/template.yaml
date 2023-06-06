@@ -25,7 +25,7 @@ Resources:
   DummyBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: my-dummy-bucket1234633222222222222
+      BucketName: my-dummy-bucket1234633333333333333333
 
 
   MyDNS:
