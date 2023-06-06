@@ -25,12 +25,11 @@ jobs:
       id: get_api_url
       run: |
         API_URL=$(aws cloudformation describe-stacks --stack-name IaC --query "Stacks[0].Outputs[?OutputKey=='HelloWorldApi'].OutputValue" --output text)
-        echo $API_URL >> $GITHUB_ENV 
-      #new
-
+        echo "API_URL=${API_URL}" >> $GITHUB_ENV 
+    #new
     - name: Generate config.js
-      run: echo "export const apiUrl = '${{ steps.get_api_url.outputs.api_url }}'" > ./resume3.0/config.js
-      #new
+      run: echo "const apiUrl = '${{ env.API_URL }}'; export default apiUrl;" > ./resume3.0/config.js
+    #new
 
     # Run a S3 sync action to upload complete website to the bucket. The '--delete' flag to ensure old files are deleted.
     # https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html

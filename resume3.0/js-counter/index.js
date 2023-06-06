@@ -44,6 +44,8 @@
 
 ////////////////////////////////////////////////////////
 
+import apiUrl from './config.js';
+
 window.addEventListener('load', async (event) => {
     const response = await fetch(apiUrl);
     let data = await response.json();
@@ -57,6 +59,7 @@ window.addEventListener('load', async (event) => {
         counterElement.textContent = visitorCount;
     }
 });
+
 
 
   
