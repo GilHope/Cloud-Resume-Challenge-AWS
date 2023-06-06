@@ -44,7 +44,7 @@
 
 ////////////////////////////////////////////////////////
 
-import apiUrl from './config.js';
+import apiUrl from '../config.js';
 
 window.addEventListener('load', async (event) => {
     const response = await fetch(apiUrl);
