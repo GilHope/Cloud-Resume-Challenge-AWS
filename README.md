@@ -1,6 +1,6 @@
 # Cloud-Resume-Challenge-AWS
 
-![](gifs/gil.png)
+![](CRC-Diagram.png)
 
 ## The Challenge
 
