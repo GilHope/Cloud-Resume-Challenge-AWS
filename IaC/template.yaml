@@ -21,12 +21,10 @@ Parameters:
 
 Resources:
 
-  #delete after test
-  DummyBucket:
+  Test-bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: my-dummy-bucket123434271111111111
-
+      BucketName: test12652676742
 
   MyDNS:
     Type: AWS::Route53::RecordSetGroup

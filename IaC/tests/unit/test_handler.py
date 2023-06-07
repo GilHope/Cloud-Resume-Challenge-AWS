@@ -2,7 +2,7 @@
 import json
 import unittest
 from unittest.mock import patch, MagicMock
-from VisitCountFunc import app  # replace 'VisitCountFunc' with the name of your Python file
+from VisitCountFunc import app  
 
 class TestLambdaHandler(unittest.TestCase):
     @patch('VisitCountFunc.app.table')

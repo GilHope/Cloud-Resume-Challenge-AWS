@@ -21,32 +21,31 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: 'us-east-1' 
 
+    # Get API URL from CloudFormation stack outputs
     - name: Get API URL
       id: get_api_url
       run: |
         API_URL=$(aws cloudformation describe-stacks --stack-name IaC --query "Stacks[0].Outputs[?OutputKey=='HelloWorldApi'].OutputValue" --output text)
         echo "API_URL=${API_URL}" >> $GITHUB_ENV 
-    #new
+    
+    # Generate a config.js file using the API URL.
     - name: Generate config.js
       run: echo "const apiUrl = '${{ env.API_URL }}'; export default apiUrl;" > ./resume3.0/config.js
-    #new
 
     # Run a S3 sync action to upload complete website to the bucket. The '--delete' flag to ensure old files are deleted.
     # https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
     - name: S3 sync
       run: aws s3 sync ./resume3.0 s3://cloudresumebucket1234212321 --delete
-      
-      ############################################################
-    # - name: Generate config.js
-    #   #needs: cicd-back-end
-    #   run: echo "export const apiUrl = '$(cat IaC/config.js)'" > ./resume3.0/config.js ------- last benchmark
 
+    # Get CloudFront distribution ID from CloudFormation stack outputs  
     - name: Get CloudFront distribution ID
       id: get_distribution_id
       run: |
         DISTRIBUTION_ID=$(aws cloudformation describe-stacks --stack-name IaC --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDistributionId'].OutputValue" --output text)
         echo "::set-output name=distribution_id::$DISTRIBUTION_ID"
-
+        
+    # Invalidate the CloudFront cache to make sure the newly uploaded files are served.
+    # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html
     - name: Cloudfront create-invalidation
       run: |
         DISTRIBUTION_ID=${{ steps.get_distribution_id.outputs.distribution_id }}
