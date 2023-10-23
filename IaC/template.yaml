@@ -21,11 +21,6 @@ Parameters:
 
 Resources:
 
-  Test-bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: test12652676742
-
   MyDNS:
     Type: AWS::Route53::RecordSetGroup
     Properties:
