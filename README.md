@@ -32,7 +32,9 @@ To streamline the development and deployment of my cloud resume website, I have 
 
 ### Additional testing
 
-Add a little bit more testing for my Lambda functionality.
+Add a more unit testing for Lambda functionality.
+
+Add e2e testing using playwright.
 
 ### Smarter API
 
