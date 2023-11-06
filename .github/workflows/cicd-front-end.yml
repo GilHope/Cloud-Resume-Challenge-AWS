@@ -51,5 +51,15 @@ jobs:
         DISTRIBUTION_ID=${{ steps.get_distribution_id.outputs.distribution_id }}
         aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
 
-            
+    # Install dependencies and run tests here
+    - name: Install dependencies
+      run: |
+        cd Cloud-Resume-Challenge-AWS/tests/e2e
+        npm install
+
+    - name: Run E2E tests
+      run: |
+        cd Cloud-Resume-Challenge-AWS/tests/e2e
+        npx playwright test
+        
                 
