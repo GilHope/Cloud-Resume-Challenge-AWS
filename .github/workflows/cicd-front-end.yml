@@ -10,7 +10,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
+    # - uses: actions/checkout@master
 
     # Starts by configuring AWS credentials using parameter secrets.
     # https://github.com/aws-actions/configure-aws-credentials
@@ -52,14 +53,10 @@ jobs:
         aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
 
     # Install dependencies and run tests here
-    - name: Install dependencies
+    - name: Install dependencies and run E2E tests
       run: |
-        cd Cloud-Resume-Challenge-AWS/tests/e2e
+        cd tests/e2e
         npm install
-
-    - name: Run E2E tests
-      run: |
-        cd Cloud-Resume-Challenge-AWS/tests/e2e
         npx playwright test
         
                 
