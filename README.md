@@ -34,8 +34,6 @@ To streamline the development and deployment of my cloud resume website, I have 
 
 Add a more unit testing for Lambda functionality.
 
-Add e2e testing using playwright.
-
 ### Smarter API
 
 Improve the API functionality of the visitor counter to be more efficient in distinguishing repeat visitors.
