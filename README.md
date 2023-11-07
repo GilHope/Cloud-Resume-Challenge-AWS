@@ -34,6 +34,12 @@ To streamline the development and deployment of my cloud resume website, I have 
 
 Add a more unit testing for Lambda functionality.
 
+### Code Quality Checks
+
+Include static code analysis like SonarQube.
+
+Run linters for code quality checks, such as ESLint (javascripts/typescript). Pylint (python).
+
 ### Smarter API
 
 Improve the API functionality of the visitor counter to be more efficient in distinguishing repeat visitors.
