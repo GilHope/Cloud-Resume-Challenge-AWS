@@ -1,4 +1,4 @@
-# Cloud-Resume-Challenge-AWS
+# Cloud-Resume-Challenge-AWS (Serverless 3-Tier Application)
 
 ![](CRC-Diagram.png)
 
